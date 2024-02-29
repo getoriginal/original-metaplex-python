@@ -25,7 +25,7 @@ cd original-metaplex-python
 Run the following command to install the project dependencies:
 
 ```bash
-poetry install
+poetry install --no-root
 ```
 
 
@@ -54,7 +54,23 @@ This step ensures that the code linters and formatters run on every commit to ma
 
 ### Running the Application
 
-TODO
+Create a new wallet using 
+    
+```bash
+solana-keygen new
+```
+
+This will generate a new wallet and give you the path, the seed phrase and public key in the terminal. Copy the file generated into the root of the project and rename it to `wallet_secret.json`.
+
+For security reasons, do not commit this file to the repository.
+
+Ensure the wallet that it refers to is topped up with DevNet SOL. You can get devnet SOL here: https://faucet.solana.com/ and pass the public key of the wallet.
+
+Run:
+    
+```bash
+python -m src.app
+```
 
 
 ### Running Tests
