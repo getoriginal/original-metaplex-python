@@ -11,13 +11,6 @@ class Attribute:
     additional_properties: Dict[str, Any] = field(default_factory=dict)
 
 
-# @dataclass
-# class Creator:
-#     address: Optional[str] = None
-#     share: Optional[int] = None
-#     additional_properties: Dict[str, Any] = field(default_factory=dict)
-
-
 @dataclass
 class File:
     type: Optional[str] = None

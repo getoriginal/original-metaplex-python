@@ -174,7 +174,7 @@ def create_sft_builder(
 
     print_supply: PrintSupplyKind | None = None
     if is_non_fungible_token_standard(token_standard):
-        # TODO_ORIGINAL: Note in JS they check if undefined, use Zero, or if null use Unlimited. We cannot do that in python.
+        # TODO_ORIGINAL: Note in JS they check if undefined, use Zero, or if null use Unlimited. We cannot do that in python so use -1.
         if params.max_supply is None:
             print_supply = Zero()
         elif params.max_supply == -1:

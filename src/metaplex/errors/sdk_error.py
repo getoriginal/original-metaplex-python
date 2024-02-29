@@ -1,4 +1,3 @@
-# Assuming MetaplexError and other required types (like Currency) are already defined in Python
 from src.metaplex.errors.metaplex_error import MetaplexError
 
 

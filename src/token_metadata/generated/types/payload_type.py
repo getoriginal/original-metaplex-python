@@ -18,6 +18,8 @@ SeedsValue = tuple[seeds_vec.SeedsVec]
 MerkleProofValue = tuple[proof_info.ProofInfo]
 NumberValue = tuple[int]
 
+# TODO_ORIGINAL: Note the Pubkey has been replaced with PubkeyPayload to avoid name conflict throughout this file
+
 
 class PubkeyJSON(typing.TypedDict):
     value: PubkeyJSONValue

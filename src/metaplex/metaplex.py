@@ -4,12 +4,6 @@ from typing import Optional
 from solana.rpc.api import Client
 
 from .core_plugins.plugin import core_plugins
-
-# from .identity_module.identity_client import IdentityClient
-# from .irys_storage.plugin import install_irys_storage
-# from .keypair_identity.plugin import install_keypair_identity
-# from .nft_module.nft_client import NftClient
-# from .rpcModule.rpc_client import RpcClient
 from .types.cluster import Cluster, resolve_cluster_from_connection
 
 

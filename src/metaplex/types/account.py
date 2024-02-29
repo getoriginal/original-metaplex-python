@@ -1,16 +1,13 @@
-# Python does not have an exact equivalent for 'buffer' and 'PublicKey', so you'll need to use appropriate Python libraries or define these yourself
-# from buffer import Buffer
-# from solana_web3 import PublicKey  # Example, adjust according to actual Python package
 from typing import Generic, Optional, TypeVar
 
 from solders.pubkey import Pubkey
 
 
 class AccountNotFoundError(Exception):
-    pass  # Define AccountNotFoundError or import if it exists
+    pass
 
 
-T = TypeVar("T")  # This is a generic type variable
+T = TypeVar("T")
 
 
 class AccountInfo:
@@ -42,7 +39,7 @@ class Account(AccountInfo, Generic[T]):
         self.data = data
 
 
-class MintAccount(Account):  # TODO_ORIGINAL
+class MintAccount(Account):
     pass
 
 
@@ -75,10 +72,8 @@ class UnparsedMaybeAccount(MaybeAccount):
 
 
 def account_parsing_function(unparsed_account):
-    # Implement the logic for parsing the account
-    pass
+    raise NotImplementedError("account_parsing_function")
 
 
 def account_parsing_and_asserting_function(unparsed_account, solution=None):
-    # Implement the logic for parsing and asserting the account
-    pass
+    raise NotImplementedError("account_parsing_and_asserting_function")

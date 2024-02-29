@@ -24,5 +24,4 @@ class KeypairIdentityDriver:
     def sign_all_transactions(
         self, transactions: list[Transaction]
     ) -> list[Transaction]:
-        # Sign all transactions
         return [self.sign_transaction(tx) for tx in transactions]

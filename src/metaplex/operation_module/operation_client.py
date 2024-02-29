@@ -22,7 +22,7 @@ class OperationClient:
     def execute(self, operation, options=None):
         operation_handler = self.get(operation)
 
-        # TODO_ORIGINAL scope not required. Used for JS asynchrous operations
+        # TODO_ORIGINAL scope not required. Used for JS async operations
         scope = {}
 
         return operation_handler.handle(
