@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "original-metaplex-python"
+version = "0.0.1"
+description = ""
+authors = ["Original"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.2.0"
+flake8 = "^7.0.0"
+isort = "^5.13.2"
+mypy = "^1.8.0"
+pre-commit = "^3.6.2"
+
+[tool.black]
+line-length = 88 # that's the black default value but we are explicit
+target-version = ['py310']
+include = '\.pyi?$'
+exclude = '/(\\.venv|venv)/'
+
+[tool.isort]
+profile = "black"
+skip = ["venv", ".venv"]
+
+[tool.mypy]
+python_version = 3.10
+follow_imports = "silent"
+ignore_missing_imports = true
+exclude = '^(\.venv|venv)/'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

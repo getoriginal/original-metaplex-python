@@ -1,0 +1,27 @@
+[flake8]
+# Because of black, we ignore those:
+#   E203: Whitespace before ':'
+#   E266: Too many leading '#' for block comment
+#   E303: too many blank lines
+#   E501: Line too long (88 &gt; 79 characters)
+#   W503: Line break occurred before a binary operator (W503)
+
+# Because we don't think it brings any value or it's not clearer
+#   C401: Unnecessary generator - rewrite as a set comprehension.
+#   C402: Unnecessary generator - rewrite as a dict comprehension.
+#   C408: Unnecessary (dict/list/tuple) call - rewrite as a literal.
+#   G004: Logging statements should not use f"..." for their first argument (only in Python 3.6+)
+#   P101: format string does contain un-indexed parameters
+#   P102: docstring does contain un-indexed parameters
+#   P103: other string does contain un-indexed parameters
+
+ignore = E203, E266, E303, E501, W503, C401, C402, C408, G004, P101, P102, P103
+
+exclude =
+    # not need to traverse the git directory
+    .git,
+    # __init__ files as they trigger a lot of F401 imported but unused and E402 module level import not at top of file errors
+    __init__.py,
+    frontend,
+    contracts/tezos/standard/FA2.py,
+    .venv,venv,
