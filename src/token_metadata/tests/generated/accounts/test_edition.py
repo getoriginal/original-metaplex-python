@@ -49,6 +49,28 @@ async def test_edition_fetch_account_not_found(mocker: MockerFixture):
 
 
 @pytest.mark.asyncio
+async def test_edition_fetch_wrong_program_id(mocker: MockerFixture):
+    mock_client = mocker.Mock(spec=Client)
+    wrong_program_id = Pubkey.new_unique()  # Simulate a different program ID
+    fake_account_info = Account(
+        data=b"some_data",
+        owner=wrong_program_id,  # Owner is not the expected PROGRAM_ID
+        lamports=0,
+        executable=False,
+        rent_epoch=0,
+    )
+    resp = GetAccountInfoResp(
+        value=fake_account_info, context=RpcResponseContext(slot=0)
+    )
+    mocker.patch.object(mock_client, "get_account_info", return_value=resp)
+    address = Pubkey.new_unique()
+
+    # Since `fetch` is not an async method, we do not use await here.
+    with pytest.raises(ValueError, match="Account does not belong to this program"):
+        Edition.fetch(mock_client, address)
+
+
+@pytest.mark.asyncio
 async def test_edition_fetch_multiple_success(mocker: MockerFixture):
     mock_editions = [
         Edition(key=EditionKey(), parent=Pubkey.new_unique(), edition=1),
@@ -87,6 +109,51 @@ async def test_edition_fetch_multiple_success(mocker: MockerFixture):
 
     editions = await Edition.fetch_multiple(mock_client, addresses, commitment=None)
     assert len(editions) == len(mock_editions)
+
+
+@pytest.mark.asyncio
+async def test_edition_fetch_multiple_wrong_program_id(mocker: MockerFixture):
+    mock_editions = [
+        Edition(key=EditionKey(), parent=Pubkey.new_unique(), edition=1),
+        Edition(key=EditionKey(), parent=Pubkey.new_unique(), edition=2),
+    ]
+    mocker.patch.object(Edition, "decode", side_effect=mock_editions)
+
+    mock_client = mocker.Mock(spec=AsyncClient)
+    addresses = [Pubkey.new_unique() for _ in range(2)]
+    wrong_program_id = (
+        Pubkey.new_unique()
+    )  # Simulate a different program ID for the second account
+
+    fake_account_infos = [
+        AccountInfo(  # Correct program ID for the first account
+            data=b"correctly_encoded_data_1",
+            owner=PROGRAM_ID,
+            lamports=0,
+            executable=False,
+            rent_epoch=0,
+        ),
+        AccountInfo(  # Wrong program ID for the second account
+            data=b"wrong_encoded_data_2",
+            owner=wrong_program_id,
+            lamports=0,
+            executable=False,
+            rent_epoch=0,
+        ),
+    ]
+
+    resp_values = [
+        _MultipleAccountsItem(pubkey=addresses[i], account=fake_account_infos[i])
+        for i in range(len(fake_account_infos))
+    ]
+
+    mocker.patch(
+        "src.token_metadata.generated.accounts.edition.get_multiple_accounts",
+        return_value=resp_values,
+    )
+
+    with pytest.raises(ValueError, match="Account does not belong to this program"):
+        await Edition.fetch_multiple(mock_client, addresses, commitment=None)
 
 
 def test_edition_decode(mocker: MockerFixture):

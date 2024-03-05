@@ -50,6 +50,30 @@ async def test_edition_marker_fetch_account_not_found(mocker: MockerFixture):
 
 
 @pytest.mark.asyncio
+async def test_edition_marker_fetch_wrong_program_id(mocker: MockerFixture):
+    mock_client = mocker.Mock(spec=AsyncClient)
+    wrong_program_id = Pubkey.new_unique()  # Simulate a different program ID
+    fake_account_info = Account(
+        data=b"some_data",
+        owner=wrong_program_id,  # Owner is not the expected PROGRAM_ID
+        lamports=0,
+        executable=False,
+        rent_epoch=0,
+    )
+    resp = GetAccountInfoResp(
+        value=fake_account_info, context=RpcResponseContext(slot=0)
+    )
+    mocker.patch.object(mock_client, "get_account_info", return_value=resp)
+    address = Pubkey.new_unique()
+
+    # Mock the decode method to avoid actual decoding
+    mocker.patch.object(EditionMarker, "decode", return_value=None)
+
+    with pytest.raises(ValueError, match="Account does not belong to this program"):
+        await EditionMarker.fetch(mock_client, address)
+
+
+@pytest.mark.asyncio
 async def test_edition_marker_fetch_multiple_success(mocker: MockerFixture):
     mock_edition_markers = [
         EditionMarker(key=EditionMarkerKey(), ledger=[1] * 31),
@@ -89,6 +113,52 @@ async def test_edition_marker_fetch_multiple_success(mocker: MockerFixture):
         mock_client, addresses, commitment=None
     )
     assert len(edition_markers) == len(mock_edition_markers)
+
+
+@pytest.mark.asyncio
+async def test_edition_marker_fetch_multiple_wrong_program_id(mocker: MockerFixture):
+    mock_client = mocker.Mock(spec=AsyncClient)
+    addresses = [Pubkey.new_unique() for _ in range(2)]
+    wrong_program_id = (
+        Pubkey.new_unique()
+    )  # Simulate a different program ID for one account
+
+    # First account has the correct program ID, second has a wrong program ID
+    fake_account_infos = [
+        AccountInfo(
+            data=b"edition_marker_data_1",
+            owner=PROGRAM_ID,
+            lamports=0,
+            executable=False,
+            rent_epoch=0,
+        ),
+        AccountInfo(
+            data=b"wrong_edition_marker_data",
+            owner=wrong_program_id,  # Wrong program ID
+            lamports=0,
+            executable=False,
+            rent_epoch=0,
+        ),
+    ]
+
+    resp_items = [
+        _MultipleAccountsItem(pubkey=addresses[i], account=fake_account_infos[i])
+        for i in range(len(fake_account_infos))
+    ]
+
+    mocker.patch(
+        "src.token_metadata.generated.accounts.edition_marker.get_multiple_accounts",
+        return_value=resp_items,
+    )
+
+    mocker.patch.object(
+        EditionMarker,
+        "decode",
+        side_effect=[None, ValueError("Account does not belong to this program")],
+    )
+
+    with pytest.raises(ValueError, match="Account does not belong to this program"):
+        await EditionMarker.fetch_multiple(mock_client, addresses, commitment=None)
 
 
 def test_edition_marker_decode(mocker: MockerFixture):
