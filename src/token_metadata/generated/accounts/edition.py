@@ -34,7 +34,24 @@ class Edition:
     edition: int
 
     @classmethod
-    def fetch(
+    async def fetch(
+        cls,
+        conn: AsyncClient,
+        address: Pubkey,
+        commitment: typing.Optional[Commitment] = None,
+        program_id: Pubkey = PROGRAM_ID,
+    ) -> typing.Optional["Edition"]:
+        resp = await conn.get_account_info(address, commitment=commitment)
+        info = resp.value
+        if info is None:
+            return None
+        if info.owner != program_id:
+            raise ValueError("Account does not belong to this program")
+        bytes_data = info.data
+        return cls.decode(bytes_data)
+
+    @classmethod
+    def fetch_sync(
         cls,
         conn: Client,
         address: Pubkey,

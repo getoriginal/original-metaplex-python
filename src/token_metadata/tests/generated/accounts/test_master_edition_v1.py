@@ -3,7 +3,6 @@ from typing import cast
 import pytest
 from anchorpy.utils.rpc import AccountInfo, _MultipleAccountsItem
 from pytest_mock import MockerFixture
-from solana.rpc.api import Client
 from solana.rpc.async_api import AsyncClient
 from solders.account import Account
 from solders.pubkey import Pubkey
@@ -28,7 +27,7 @@ async def test_master_edition_v1_fetch_success(mocker: MockerFixture):
     )
     mocker.patch.object(MasterEditionV1, "decode", return_value=mock_master_edition_v1)
 
-    mock_client = mocker.Mock(spec=Client)
+    mock_client = mocker.Mock(spec=AsyncClient)
     fake_account_info = Account(
         data=b"master_edition_v1_data",
         owner=PROGRAM_ID,
@@ -41,24 +40,24 @@ async def test_master_edition_v1_fetch_success(mocker: MockerFixture):
     )
     mocker.patch.object(mock_client, "get_account_info", return_value=resp)
     address = Pubkey.new_unique()
-    edition = MasterEditionV1.fetch(mock_client, address)
+    edition = await MasterEditionV1.fetch(mock_client, address)
 
     assert edition == mock_master_edition_v1
 
 
 @pytest.mark.asyncio
 async def test_master_edition_v1_fetch_account_not_found(mocker: MockerFixture):
-    mock_client = mocker.Mock(spec=Client)
+    mock_client = mocker.Mock(spec=AsyncClient)
     resp = GetAccountInfoResp(value=None, context=RpcResponseContext(slot=0))
     mocker.patch.object(mock_client, "get_account_info", return_value=resp)
     address = Pubkey.new_unique()
-    edition = MasterEditionV1.fetch(mock_client, address)
+    edition = await MasterEditionV1.fetch(mock_client, address)
     assert edition is None
 
 
 @pytest.mark.asyncio
 async def test_master_edition_v1_fetch_wrong_program_id(mocker: MockerFixture):
-    mock_client = mocker.Mock(spec=Client)
+    mock_client = mocker.Mock(spec=AsyncClient)
     wrong_program_id = Pubkey.new_unique()
     fake_account_info = Account(
         data=b"wrong_data",
@@ -76,7 +75,7 @@ async def test_master_edition_v1_fetch_wrong_program_id(mocker: MockerFixture):
     mocker.patch.object(MasterEditionV1, "decode", return_value=None)
 
     with pytest.raises(ValueError, match="Account does not belong to this program"):
-        MasterEditionV1.fetch(mock_client, address)
+        await MasterEditionV1.fetch(mock_client, address)
 
 
 @pytest.mark.asyncio

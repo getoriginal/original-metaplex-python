@@ -43,7 +43,7 @@ class FindNftByMintOperation:
 
 
 def to_metadata_account(client, account):
-    metadata_account = Metadata.fetch(conn=client, address=account.public_key)
+    metadata_account = Metadata.fetch_sync(conn=client, address=account.public_key)
     return metadata_account
 
 
@@ -51,7 +51,7 @@ def parse_original_or_print_edition_account(client, account):
     if account is None:
         return None
 
-    edition = Edition.fetch(conn=client, address=account.public_key)
+    edition = Edition.fetch_sync(conn=client, address=account.public_key)
     if edition.key == MasterEditionV1Key():
         edition = MasterEditionV1.decode(account.data)
     elif edition.key == MasterEditionV2Key():

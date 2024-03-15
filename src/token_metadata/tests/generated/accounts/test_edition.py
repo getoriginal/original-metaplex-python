@@ -3,7 +3,6 @@ from typing import cast
 import pytest
 from anchorpy.utils.rpc import AccountInfo, _MultipleAccountsItem
 from pytest_mock import MockerFixture
-from solana.rpc.api import Client
 from solana.rpc.async_api import AsyncClient
 from solders.account import Account
 from solders.pubkey import Pubkey
@@ -19,7 +18,7 @@ async def test_edition_fetch_success(mocker: MockerFixture):
     mock_edition = Edition(key=EditionKey(), parent=Pubkey.new_unique(), edition=42)
     mocker.patch.object(Edition, "decode", return_value=mock_edition)
 
-    mock_client = mocker.Mock(spec=Client)
+    mock_client = mocker.Mock(spec=AsyncClient)
     fake_account_info = Account(
         data=b"edition_data",
         owner=PROGRAM_ID,
@@ -32,7 +31,7 @@ async def test_edition_fetch_success(mocker: MockerFixture):
     )
     mocker.patch.object(mock_client, "get_account_info", return_value=resp)
     address = Pubkey.new_unique()
-    edition = Edition.fetch(mock_client, address)
+    edition = await Edition.fetch(mock_client, address)
 
     assert edition == mock_edition
     mock_client.get_account_info.assert_called_with(address, commitment=None)
@@ -40,17 +39,17 @@ async def test_edition_fetch_success(mocker: MockerFixture):
 
 @pytest.mark.asyncio
 async def test_edition_fetch_account_not_found(mocker: MockerFixture):
-    mock_client = mocker.Mock(spec=Client)
+    mock_client = mocker.Mock(spec=AsyncClient)
     resp = GetAccountInfoResp(value=None, context=RpcResponseContext(slot=0))
     mocker.patch.object(mock_client, "get_account_info", return_value=resp)
     address = Pubkey.new_unique()
-    edition = Edition.fetch(mock_client, address)
+    edition = await Edition.fetch(mock_client, address)
     assert edition is None
 
 
 @pytest.mark.asyncio
 async def test_edition_fetch_wrong_program_id(mocker: MockerFixture):
-    mock_client = mocker.Mock(spec=Client)
+    mock_client = mocker.Mock(spec=AsyncClient)
     wrong_program_id = Pubkey.new_unique()  # Simulate a different program ID
     fake_account_info = Account(
         data=b"some_data",
@@ -67,7 +66,7 @@ async def test_edition_fetch_wrong_program_id(mocker: MockerFixture):
 
     # Since `fetch` is not an async method, we do not use await here.
     with pytest.raises(ValueError, match="Account does not belong to this program"):
-        Edition.fetch(mock_client, address)
+        await Edition.fetch(mock_client, address)
 
 
 @pytest.mark.asyncio
