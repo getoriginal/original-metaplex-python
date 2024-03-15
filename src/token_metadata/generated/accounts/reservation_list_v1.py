@@ -3,8 +3,10 @@ from dataclasses import dataclass
 
 import borsh_construct as borsh
 from anchorpy.borsh_extension import BorshPubkey
-from anchorpy.coder.accounts import ACCOUNT_DISCRIMINATOR_SIZE
-from anchorpy.error import AccountInvalidDiscriminator
+
+# TODO_ORIGINAL
+# from anchorpy.coder.accounts import ACCOUNT_DISCRIMINATOR_SIZE
+# from anchorpy.error import AccountInvalidDiscriminator
 from anchorpy.utils.rpc import get_multiple_accounts
 from construct import Construct
 from solana.rpc.async_api import AsyncClient
@@ -75,11 +77,13 @@ class ReservationListV1:
 
     @classmethod
     def decode(cls, data: bytes) -> "ReservationListV1":
-        if data[:ACCOUNT_DISCRIMINATOR_SIZE] != cls.discriminator:
-            raise AccountInvalidDiscriminator(
-                "The discriminator for this account is invalid"
-            )
-        dec = ReservationListV1.layout.parse(data[ACCOUNT_DISCRIMINATOR_SIZE:])
+        # TODO_ORIGINAL
+        # if data[:ACCOUNT_DISCRIMINATOR_SIZE] != cls.discriminator:
+        #     raise AccountInvalidDiscriminator(
+        #         "The discriminator for this account is invalid"
+        #     )
+        # dec = ReservationListV1.layout.parse(data[ACCOUNT_DISCRIMINATOR_SIZE:])
+        dec = ReservationListV1.layout.parse(data)
         return cls(
             key=types.key.from_decoded(dec.key),
             master_edition=dec.master_edition,
