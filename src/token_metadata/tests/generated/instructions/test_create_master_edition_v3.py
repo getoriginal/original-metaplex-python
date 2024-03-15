@@ -1,0 +1,49 @@
+from solders.instruction import AccountMeta
+from solders.pubkey import Pubkey
+
+from src.token_metadata.generated.instructions.create_master_edition_v3 import (
+    create_master_edition_v3,
+)
+from src.token_metadata.generated.program_id import PROGRAM_ID
+from src.token_metadata.generated.types.create_master_edition_args import (
+    CreateMasterEditionArgs,
+)
+
+
+def test_create_master_edition_v3():
+    args = {"create_master_edition_args": CreateMasterEditionArgs(max_supply=10)}
+    accounts = {
+        "edition": Pubkey.new_unique(),
+        "mint": Pubkey.new_unique(),
+        "update_authority": Pubkey.new_unique(),
+        "mint_authority": Pubkey.new_unique(),
+        "payer": Pubkey.new_unique(),
+        "metadata": Pubkey.new_unique(),
+    }
+    instruction = create_master_edition_v3(
+        args=args, accounts=accounts, program_id=PROGRAM_ID
+    )
+    assert len(instruction.accounts) == 9
+    assert instruction.program_id == PROGRAM_ID
+
+
+def test_create_master_edition_v3_with_remaining_accounts():
+    args = {"create_master_edition_args": CreateMasterEditionArgs(max_supply=10)}
+    additional_account = AccountMeta(
+        pubkey=Pubkey.new_unique(), is_signer=False, is_writable=False
+    )
+    accounts = {
+        "edition": Pubkey.new_unique(),
+        "mint": Pubkey.new_unique(),
+        "update_authority": Pubkey.new_unique(),
+        "mint_authority": Pubkey.new_unique(),
+        "payer": Pubkey.new_unique(),
+        "metadata": Pubkey.new_unique(),
+    }
+    instruction = create_master_edition_v3(
+        args=args,
+        accounts=accounts,
+        program_id=PROGRAM_ID,
+        remaining_accounts=[additional_account],
+    )
+    assert len(instruction.accounts) == 10
