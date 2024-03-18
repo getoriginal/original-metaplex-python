@@ -108,7 +108,7 @@ def burn(
     ]
     if remaining_accounts is not None:
         keys += remaining_accounts
-    # TODO_ORIGINAL: TODO_ORIGINAL: identifier
+    # TODO_ORIGINAL: identifier
 
     identifier = bytes([41])
     # identifier = b"tn\x1d8k\xdb*]"
