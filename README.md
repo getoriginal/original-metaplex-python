@@ -1,6 +1,21 @@
 # original-metaplex-python
 Python port of Metaplex JS SDK - https://github.com/metaplex-foundation/js
 
+## Installing this package
+If you simply want to use this package, first clone this repository on your machine, then install it from your file system using pip:
+
+```bash
+pip install -e /path/to/your/directory/original-metaplex-python
+```
+
+or poetry:
+
+```bash
+poetry add -e /path/to/your/directory/original-metaplex-python
+```
+Note -e adds it in editable mode.
+
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
