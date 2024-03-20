@@ -90,7 +90,7 @@ poetry run pytest -m e2e
 You can also just run this if you want to experiment with the flow outside the tests:
     
 ```bash
-python -m src.app
+python -m original_metaplex_python.app
 ```
 
 ## Tools & IDE
