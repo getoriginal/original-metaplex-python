@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from solana.transaction import Transaction
+from solders.keypair import Keypair
 
 from ..types.program import Program
 from ..types.signer import Signer
@@ -144,9 +145,15 @@ class TransactionBuilder:
 
         instructions = self.get_instructions()
 
+        fee_payer = self.get_fee_payer()
+        fee_payer_pub_key = (
+            fee_payer.pubkey()
+            if isinstance(fee_payer, Keypair)
+            else fee_payer.public_key
+        )
         transaction = Transaction(
             recent_blockhash=blockhash_with_expiry_block_height["blockhash"],
-            fee_payer=self.get_fee_payer().public_key,
+            fee_payer=fee_payer_pub_key,
         )
         transaction.add(*instructions)
 

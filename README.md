@@ -66,19 +66,31 @@ For security reasons, do not commit this file to the repository.
 
 Ensure the wallet that it refers to is topped up with DevNet SOL. You can get devnet SOL here: https://faucet.solana.com/ and pass the public key of the wallet.
 
-Run:
-    
-```bash
-python -m src.app
-```
+## Test flow
+
+`src/tests/e2e/test_create_update_transfer_burn_flow.py` will be the file of most interest. 
+It is where the full creation of a collection, minting an NFT, updating it, transferring it and burning is tested.
+If you use pycharm, you should be able to run the tests from the IDE.
 
 
 ### Running Tests
 
-To run the tests, use the following command:
+To run the unit tests, use the following command:
 
 ```bash
-poetry run pytest
+poetry run pytest -m unit
+```
+
+And for the e2e test flow, use the following command:
+
+```bash
+poetry run pytest -m e2e
+```
+
+You can also just run this if you want to experiment with the flow outside the tests:
+    
+```bash
+python -m src.app
 ```
 
 ## Tools & IDE
