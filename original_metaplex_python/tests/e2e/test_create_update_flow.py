@@ -9,45 +9,25 @@ from original_metaplex_python.metaplex.keypair_identity.plugin import keypair_id
 from original_metaplex_python.metaplex.nft_module.operations.create_nft import (
     CreateNftBuilderParams,
 )
-from original_metaplex_python.metaplex.nft_module.operations.delete_nft import (
-    DeleteNftBuilderParams,
-)
 from original_metaplex_python.metaplex.nft_module.operations.find_nft_by_mint import (
     FindNftByMintInput,
-)
-from original_metaplex_python.metaplex.nft_module.operations.transfer_nft import (
-    NftOrSft,
-    TransferNftBuilderParams,
 )
 from original_metaplex_python.metaplex.nft_module.operations.update_nft import (
     UpdateNftBuilderParams,
 )
 from original_metaplex_python.metaplex.types.creator import CreatorInput
-from original_metaplex_python.metaplex.utils.transaction_builder import (
-    TransactionBuilderOptions,
-)
 from original_metaplex_python.token_metadata.generated.types.token_standard import (
     ProgrammableNonFungible,
 )
 
 
-def test_create_transfer_burn_asset_flow(project_root):
+def test_create_update_flow(project_root):
     try:
         with open(f"{project_root}/wallet_secret.txt") as f:
             secret = f.read()
             wallet = Keypair.from_base58_string(secret)
     except FileNotFoundError:
         raise Exception("Please provide a valid wallet secret file with a private key")
-
-    try:
-        with open(f"{project_root}/wallet_secret_friend.txt") as f:
-            friend_secret = f.read()
-            friend_key_pair = Keypair.from_base58_string(friend_secret)
-    except FileNotFoundError:
-        print(
-            "Please provide a wallet secret file to test transferring NFT to a friend."
-        )
-        return
 
     # Metaplex Client
     rpc_url = "https://api.devnet.solana.com"
@@ -219,106 +199,5 @@ def test_create_transfer_burn_asset_flow(project_root):
     print("Success!🎉")
     print(
         f"Updated NFT: https://explorer.solana.com/address/{nft_mint_address}?cluster=devnet"
-    )
-    print(f"Tx: https://explorer.solana.com/tx/{signature}?cluster=devnet")
-
-    #### TRANSFER NFT ####
-    # In reality, we would just have the public key, but we want to burn it later
-    # friend_pubkey = Pubkey.from_string("4AN2ePiudKWheFBL7e7GFa1w7HhkUPRv4qfF5WAkvH1C")
-    transfer_transaction_builder = (
-        metaplex.nfts()
-        .builders()
-        .transfer(
-            TransferNftBuilderParams(
-                nft_or_sft=NftOrSft(
-                    address=nft_mint_address,
-                    token_standard=ProgrammableNonFungible,
-                ),
-                authority=wallet,
-                from_owner=wallet.pubkey(),
-                to_owner=friend_key_pair.pubkey(),
-            )
-        )
-    )
-
-    response = metaplex.rpc().send_and_confirm_transaction(
-        transfer_transaction_builder, TxOpts(preflight_commitment=Finalized)
-    )
-
-    signature = response["signature"].value
-    confirm_response = response["confirm_response"]
-    blockhash = response["blockhash"]
-    error = confirm_response.value[0].err
-    confirmation_status = confirm_response.value[0].confirmation_status
-
-    assert signature is not None
-    assert error is None
-    assert confirmation_status == TransactionConfirmationStatus.Finalized
-    assert blockhash is not None
-
-    if error is not None:
-        raise Exception(f"Failed to confirm transfer transaction {error}")
-
-    print("Success!🎉")
-    print(
-        f"Transferred NFT: https://explorer.solana.com/address/{nft_mint_address}?cluster=devnet"
-    )
-    print(f"Tx: https://explorer.solana.com/tx/{signature}?cluster=devnet")
-
-    ### BURN NFT ####
-
-    delete_transaction_builder = (
-        metaplex.nfts()
-        .builders()
-        .delete(
-            input=DeleteNftBuilderParams(
-                mint_address=nft_mint_address,
-                owner_token_account=None,
-                collection=collection_mint_address,
-                parent_edition_mint=None,
-                parent_edition_token=None,
-                edition_marker=None,
-                amount=None,
-                authority=friend_key_pair,
-            ),
-            options=TransactionBuilderOptions(
-                payer=wallet,
-            ),
-        )
-    )
-
-    response = metaplex.rpc().send_and_confirm_transaction(
-        delete_transaction_builder, TxOpts(preflight_commitment=Finalized)
-    )
-
-    signature = response["signature"].value
-    confirm_response = response["confirm_response"]
-    blockhash = response["blockhash"]
-    error = confirm_response.value[0].err
-    confirmation_status = confirm_response.value[0].confirmation_status
-
-    assert signature is not None
-    assert error is None
-    assert confirmation_status == TransactionConfirmationStatus.Finalized
-    assert blockhash is not None
-
-    # TODO_ORIGINAL - delete_transaction_builder should set context
-    context = delete_transaction_builder.get_context()
-    deleted_nft_mint_address = nft_mint_address
-    deleted_nft_metadata_address = nft_metadata_address
-    deleted_nft_master_edition_address = nft_master_edition_address
-    deleted_nft_token_address = nft_token_address
-
-    assert deleted_nft_mint_address is not None
-    assert deleted_nft_metadata_address is not None
-    assert deleted_nft_master_edition_address is not None
-    assert deleted_nft_token_address is not None
-
-    if error is not None:
-        raise Exception(f"Failed to burn: {error}")
-
-    print("Success!🎉")
-    print(
-        f"Burned NFT: https://explorer.solana.com/address/{nft_mint_address}?cluster=devnet"
     )
     print(f"Tx: https://explorer.solana.com/tx/{signature}?cluster=devnet")

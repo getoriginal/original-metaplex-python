@@ -25,7 +25,7 @@ from original_metaplex_python.metaplex.token_module.token_pdas_client import (
 )
 from original_metaplex_python.metaplex.types.amount import SplTokenAmount, token
 from original_metaplex_python.metaplex.types.read_api import TransferNftCompressionParam
-from original_metaplex_python.metaplex.types.signer import Signer
+from original_metaplex_python.metaplex.types.signer import Signer, get_public_key
 from original_metaplex_python.metaplex.utils.transaction_builder import (
     InstructionWithSigners,
     TransactionBuilder,
@@ -95,8 +95,8 @@ def transfer_nft_builder(
     authorization_details = params.authorization_details
 
     # From owner
-    from_owner = (
-        params.from_owner or get_signer_from_token_metadata_authority(authority).pubkey
+    from_owner = params.from_owner or get_public_key(
+        get_signer_from_token_metadata_authority(authority)
     )
 
     # Programs
@@ -187,7 +187,7 @@ def transfer_nft_builder(
                             else None
                         ),
                         authority=auth.accounts.authority,
-                        payer=payer.public_key,
+                        payer=get_public_key(payer),
                         sysvar_instructions=SYSVAR_INSTRUCTIONS_PUBKEY,
                         spl_token_program=token_program.address,
                         spl_ata_program=ata_program.address,

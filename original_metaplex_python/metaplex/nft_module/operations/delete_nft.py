@@ -20,7 +20,7 @@ from original_metaplex_python.metaplex.token_module.token_pdas_client import (
     AssociatedTokenAccountOptions,
 )
 from original_metaplex_python.metaplex.types.amount import SplTokenAmount, token
-from original_metaplex_python.metaplex.types.signer import Signer
+from original_metaplex_python.metaplex.types.signer import Signer, get_public_key
 from original_metaplex_python.metaplex.utils.transaction_builder import (
     InstructionWithSigners,
     TransactionBuilder,
@@ -77,7 +77,7 @@ def delete_nft_builder(
     token_program = metaplex.programs().get_token(programs)
     token_metadata_program = metaplex.programs().get_token_metadata(programs)
 
-    owner = get_signer_from_token_metadata_authority(authority).pubkey()
+    owner = get_public_key(get_signer_from_token_metadata_authority(authority))
     metadata = (
         metaplex.nfts()
         .pdas()

@@ -28,7 +28,11 @@ from original_metaplex_python.metaplex.token_module.token_pdas_client import (
 )
 from original_metaplex_python.metaplex.types.amount import SplTokenAmount
 from original_metaplex_python.metaplex.types.creator import CreatorInput
-from original_metaplex_python.metaplex.types.signer import Signer, is_signer
+from original_metaplex_python.metaplex.types.signer import (
+    Signer,
+    get_public_key,
+    is_signer,
+)
 from original_metaplex_python.metaplex.utils.transaction_builder import (
     InstructionWithSigners,
     TransactionBuilder,
@@ -143,7 +147,7 @@ def create_sft_builder(
         TokenStandardKind, ProgrammableNonFungible
     )
 
-    mint_address = params.use_existing_mint or use_new_mint.pubkey()
+    mint_address = params.use_existing_mint or get_public_key(use_new_mint)
     associated_token_address = None
     if params.token_owner:
         associated_token_address = (
@@ -173,11 +177,9 @@ def create_sft_builder(
         .master_edition(MintAddressPdaInput(mint=mint_address, programs=programs))
     )
 
-    update_authority_pubkey = (
-        update_authority.pubkey()
-        if isinstance(update_authority, Keypair)
-        else update_authority.public_key
-    )
+    update_authority_pubkey = get_public_key(update_authority)
+    mint_authority_pubkey = get_public_key(mint_authority)
+    payer_pubkey = get_public_key(payer)
 
     creators_input: list[CreatorInput] = params.creators or [
         CreatorInput(
@@ -215,8 +217,8 @@ def create_sft_builder(
                 else None
             ),
             mint=mint_address,
-            authority=mint_authority.public_key,
-            payer=payer.public_key,
+            authority=mint_authority_pubkey,
+            payer=payer_pubkey,
             update_authority=update_authority_pubkey,
             sysvar_instructions=SYSVAR_INSTRUCTIONS_PUBKEY,
             spl_token_program=token_program.address,
@@ -261,7 +263,7 @@ def create_sft_builder(
         old_accounts = create_instruction.accounts
         # create the new accounts list from the existing accounts with the new mint account at index 2:
         new_mint_account = AccountMeta(
-            pubkey=use_new_mint.pubkey(), is_signer=True, is_writable=True
+            pubkey=get_public_key(use_new_mint), is_signer=True, is_writable=True
         )
         create_instruction.accounts = (
             old_accounts[:2] + [new_mint_account] + old_accounts[3:]

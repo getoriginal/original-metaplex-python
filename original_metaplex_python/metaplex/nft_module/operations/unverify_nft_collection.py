@@ -9,7 +9,7 @@ from original_metaplex_python.metaplex.nft_module.nft_pdas_client import (
     MetadataDelegateRecordPdaInput,
     MintAddressPdaInput,
 )
-from original_metaplex_python.metaplex.types.signer import Signer
+from original_metaplex_python.metaplex.types.signer import Signer, get_public_key
 from original_metaplex_python.metaplex.utils.transaction_builder import (
     TransactionBuilder,
     TransactionBuilderOptions,
@@ -89,8 +89,8 @@ def unverify_nft_collection_builder(
             unverify_sized_collection_item(
                 accounts=UnverifySizedCollectionItemAccounts(
                     metadata=metadata,
-                    collection_authority=collection_authority.public_key,
-                    payer=payer.public_key,
+                    collection_authority=get_public_key(collection_authority),
+                    payer=get_public_key(payer),
                     collection_mint=collection_mint_address,
                     collection=collection_metadata,
                     collection_master_edition_account=collection_edition,
@@ -99,7 +99,7 @@ def unverify_nft_collection_builder(
                     .collection_authority_record(
                         CollectionAuthorityRecordPdaInput(
                             mint=collection_mint_address,
-                            collection_authority=collection_authority.public_key,
+                            collection_authority=get_public_key(collection_authority),
                             programs=programs,
                         )
                     ),
@@ -111,7 +111,7 @@ def unverify_nft_collection_builder(
                 unverify_collection(
                     accounts=UnverifyCollectionAccounts(
                         metadata=metadata,
-                        collection_authority=collection_authority.public_key,
+                        collection_authority=get_public_key(collection_authority),
                         collection_mint=collection_mint_address,
                         collection=collection_metadata,
                         collection_master_edition_account=collection_edition,
@@ -120,7 +120,9 @@ def unverify_nft_collection_builder(
                         .collection_authority_record(
                             CollectionAuthorityRecordPdaInput(
                                 mint=collection_mint_address,
-                                collection_authority=collection_authority.public_key,
+                                collection_authority=get_public_key(
+                                    collection_authority
+                                ),
                                 programs=programs,
                             )
                         ),
@@ -150,7 +152,7 @@ def unverify_nft_collection_builder(
                 mint=collection_mint_address,
                 type="CollectionV1",
                 update_authority=collection_update_authority,
-                delegate=collection_authority.public_key,
+                delegate=get_public_key(collection_authority),
                 programs=programs,
             )
         )
@@ -165,7 +167,7 @@ def unverify_nft_collection_builder(
             {
                 "instruction": unverify(
                     accounts=UnverifyAccounts(
-                        authority=collection_authority.public_key,
+                        authority=get_public_key(collection_authority),
                         delegate_record=delegate_record,
                         metadata=metadata,
                         collection_mint=collection_mint_address,

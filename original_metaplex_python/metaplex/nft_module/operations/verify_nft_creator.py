@@ -7,7 +7,7 @@ from solders.sysvar import INSTRUCTIONS as SYSVAR_INSTRUCTIONS_PUBKEY
 from original_metaplex_python.metaplex.nft_module.nft_pdas_client import (
     MintAddressPdaInput,
 )
-from original_metaplex_python.metaplex.types.signer import Signer
+from original_metaplex_python.metaplex.types.signer import Signer, get_public_key
 from original_metaplex_python.metaplex.utils.transaction_builder import (
     TransactionBuilder,
     TransactionBuilderOptions,
@@ -53,7 +53,7 @@ def verify_nft_creator_builder(
         {
             "instruction": verify(
                 accounts=VerifyAccounts(
-                    authority=creator.public_key,
+                    authority=get_public_key(creator),
                     metadata=metaplex.nfts()
                     .pdas()
                     .metadata(

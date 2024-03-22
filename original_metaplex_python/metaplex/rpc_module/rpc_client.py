@@ -24,7 +24,11 @@ from original_metaplex_python.metaplex.types.account import (
 )
 from original_metaplex_python.metaplex.types.amount import lamports
 from original_metaplex_python.metaplex.types.program import is_error_with_logs
-from original_metaplex_python.metaplex.types.signer import Signer, get_signer_histogram
+from original_metaplex_python.metaplex.types.signer import (
+    Signer,
+    get_public_key,
+    get_signer_histogram,
+)
 from original_metaplex_python.metaplex.utils.common import zip_map
 from original_metaplex_python.metaplex.utils.read_api_connection import (
     ReadApiConnection,
@@ -123,7 +127,7 @@ class RpcClient:
         default_fee_payer = self.get_default_fee_payer()
 
         if not transaction.fee_payer and default_fee_payer:
-            transaction.fee_payer = default_fee_payer.public_key
+            transaction.fee_payer = get_public_key(default_fee_payer)
             signers = [default_fee_payer] + signers
 
         transaction = self.sign_transaction(transaction, signers)

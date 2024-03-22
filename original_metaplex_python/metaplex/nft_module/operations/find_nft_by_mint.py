@@ -28,6 +28,7 @@ from original_metaplex_python.metaplex.token_module.token_pdas_client import (
     AssociatedTokenAccountOptions,
 )
 from original_metaplex_python.metaplex.types.operation import use_operation
+from original_metaplex_python.metaplex.types.signer import get_public_key
 from original_metaplex_python.token_metadata.generated.accounts import (
     Edition,
     MasterEditionV1,
@@ -62,7 +63,7 @@ class FindNftByMintOperation:
 
 
 def to_metadata_account(client, account):
-    metadata_account = Metadata.fetch_sync(conn=client, address=account.public_key)
+    metadata_account = Metadata.fetch_sync(conn=client, address=get_public_key(account))
     return metadata_account
 
 
@@ -70,7 +71,7 @@ def parse_original_or_print_edition_account(client, account):
     if account is None:
         return None
 
-    edition = Edition.fetch_sync(conn=client, address=account.public_key)
+    edition = Edition.fetch_sync(conn=client, address=get_public_key(account))
     if edition.key == MasterEditionV1Key():
         edition = MasterEditionV1.decode(account.data)
     elif edition.key == MasterEditionV2Key():
@@ -125,19 +126,19 @@ class FindNftByMintOperationHandler:
         # TODO_ORIGINAL: no scope
         # scope.throw_if_canceled()
 
-        mint = to_mint(to_mint_account(accounts[0]), accounts[0].public_key)
+        mint = to_mint(to_mint_account(accounts[0]), get_public_key(accounts[0]))
         metadata = to_metadata(
             to_metadata_account(metaplex.connection, accounts[1]),
-            accounts[1].public_key,
+            get_public_key(accounts[1]),
         )
         edition_account = parse_original_or_print_edition_account(
             metaplex.connection, accounts[2]
         )
-        edition_public_key = accounts[2].public_key if accounts[2] else None
+        edition_public_key = get_public_key(accounts[2]) if accounts[2] else None
         if accounts[3]:
             token = to_token(
                 to_token_account(metaplex.connection, accounts[3]),
-                accounts[3].public_key,
+                get_public_key(accounts[3]),
             )
         else:
             token = None

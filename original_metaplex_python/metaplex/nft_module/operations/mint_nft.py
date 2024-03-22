@@ -122,6 +122,7 @@ def mint_nft_builder(
     assert to_token is not None, "to_token must be a Pubkey"
 
     authority_pub_key = get_public_key(auth.accounts.authority)
+    payer_pub_key = get_public_key(payer)
 
     return (
         TransactionBuilder.make()
@@ -148,7 +149,7 @@ def mint_nft_builder(
                         mint=nft_or_sft.address,
                         authority=authority_pub_key,
                         delegate_record=None,
-                        payer=payer.public_key,
+                        payer=payer_pub_key,
                         sysvar_instructions=SYSVAR_INSTRUCTIONS_PUBKEY,
                         spl_token_program=token_program.address,
                         spl_ata_program=ata_program.address,

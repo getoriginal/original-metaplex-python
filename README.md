@@ -69,22 +69,25 @@ This step ensures that the code linters and formatters run on every commit to ma
 
 ### Running the Application
 
-Create a new wallet using 
-    
-```bash
-solana-keygen new
+First we need to create some wallets.
+
+Use the Phantom wallet browser extension to create two new accounts. Then grab the private keys and put one in each of the files:
+```
+wallet_secret.txt // Used to mint NFTs
+wallet_secret_friend.txt // The friend's wallet to test transferring.
 ```
 
-This will generate a new wallet and give you the path, the seed phrase and public key in the terminal. Copy the file generated into the root of the project and rename it to `wallet_secret.json`.
+Both files should be placed at the root of your project.
 
-For security reasons, do not commit this file to the repository.
-
-Ensure the wallet that it refers to is topped up with DevNet SOL. You can get devnet SOL here: https://faucet.solana.com/ and pass the public key of the wallet.
+Ensure that the wallet_secret.txt account is topped up with DevNet SOL. You can get devnet SOL here: https://faucet.solana.com/ and pass the public key of the wallet.
 
 ## Test flow
 
-`src/tests/e2e/test_create_update_transfer_burn_flow.py` will be the file of most interest. 
+`src/tests/e2e/test_create_update_flow.py` and `src/tests/e2e/test_create_update_transfer_burn_flow.py` will be the files of most interest. 
 It is where the full creation of a collection, minting an NFT, updating it, transferring it and burning is tested.
+
+The burn and transfer is separated in case you want to inspect the NFT before it is either transferred or burned.
+
 If you use pycharm, you should be able to run the tests from the IDE.
 
 

@@ -160,5 +160,6 @@ cython_debug/
 .idea/
 *.pyc
 
-wallet_secret.json
+wallet_secret.txt
+wallet_secret_friend.txt
 

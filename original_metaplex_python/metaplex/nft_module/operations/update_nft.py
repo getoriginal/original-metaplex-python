@@ -30,7 +30,7 @@ from original_metaplex_python.metaplex.nft_module.operations.verify_nft_creator 
     VerifyNftCreatorBuilderParams,
 )
 from original_metaplex_python.metaplex.types.creator import CreatorInput
-from original_metaplex_python.metaplex.types.signer import Signer
+from original_metaplex_python.metaplex.types.signer import Signer, get_public_key
 from original_metaplex_python.metaplex.utils.transaction_builder import (
     InstructionWithSigners,
     TransactionBuilder,
@@ -226,7 +226,7 @@ def update_nft_builder(
                                 if is_non_fungible(nft_or_sft)
                                 else None
                             ),
-                            payer=payer.public_key,
+                            payer=get_public_key(payer),
                             sysvar_instructions=SYSVAR_INSTRUCTIONS_PUBKEY,
                             authorization_rules=auth.accounts.authorization_rules,
                             authorization_rules_program=TOKEN_AUTH_RULES_ID,
