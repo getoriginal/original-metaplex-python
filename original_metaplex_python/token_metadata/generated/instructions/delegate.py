@@ -104,7 +104,9 @@ def delegate(
     ]
     if remaining_accounts is not None:
         keys += remaining_accounts
-    identifier = b"Z\x93K\xb2UX\x04\x89"
+    # TODO_ORIGINAL
+    # identifier = b"Z\x93K\xb2UX\x04\x89"
+    identifier = bytes([44])
     encoded_args = layout.build(
         {
             "delegate_args": args["delegate_args"].to_encodable(),

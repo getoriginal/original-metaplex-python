@@ -9,6 +9,7 @@ from original_metaplex_python.metaplex.nft_module.nft_pdas_client import (
 )
 from original_metaplex_python.metaplex.types.signer import Signer, get_public_key
 from original_metaplex_python.metaplex.utils.transaction_builder import (
+    InstructionWithSigners,
     TransactionBuilder,
     TransactionBuilderOptions,
 )
@@ -50,8 +51,8 @@ def verify_nft_creator_builder(
 
     transaction_builder = TransactionBuilder.make().set_fee_payer(payer)
     transaction_builder.add(
-        {
-            "instruction": verify(
+        InstructionWithSigners(
+            instruction=verify(
                 accounts=VerifyAccounts(
                     authority=get_public_key(creator),
                     metadata=metaplex.nfts()
@@ -70,9 +71,9 @@ def verify_nft_creator_builder(
                 ),
                 program_id=token_metadata_program.address,
             ),
-            "signers": [creator],
-            "key": params.instruction_key or "verify_creator",
-        }
+            signers=[creator],
+            key=params.instruction_key or "verify_creator",
+        )
     )
 
     return transaction_builder

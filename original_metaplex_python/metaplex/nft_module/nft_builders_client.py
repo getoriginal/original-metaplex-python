@@ -1,10 +1,22 @@
 from typing import Optional
 
 from ..utils.transaction_builder import TransactionBuilderOptions
+from .operations.approve_nft_collection_authority import (
+    ApproveNftCollectionAuthorityBuilderParams,
+    approve_nft_collection_authority_builder,
+)
+from .operations.approve_nft_delegate import (
+    ApproveNftDelegateBuilderParams,
+    approve_nft_delegate_builder,
+)
 from .operations.create_nft import CreateNftBuilderParams, create_nft_builder
 from .operations.create_sft import CreateSftBuilderParams, create_sft_builder
 from .operations.delete_nft import DeleteNftBuilderParams, delete_nft_builder
 from .operations.mint_nft import MintNftBuilderParams, mint_nft_builder
+from .operations.revoke_nft_collection_authority import (
+    RevokeNftCollectionAuthorityBuilderParams,
+    revoke_nft_collection_authority_builder,
+)
 from .operations.transfer_nft import TransferNftBuilderParams, transfer_nft_builder
 from .operations.unverify_nft_collection import (
     UnverifyNftCollectionBuilderParams,
@@ -76,6 +88,20 @@ class NftBuildersClient:
     ):
         return unverify_nft_collection_builder(self.metaplex, input, options)
 
+    def approve_collection_authority(
+        self,
+        input: ApproveNftCollectionAuthorityBuilderParams,
+        options: Optional[TransactionBuilderOptions] = None,
+    ):
+        return approve_nft_collection_authority_builder(self.metaplex, input, options)
+
+    def revoke_collection_authority(
+        self,
+        input: RevokeNftCollectionAuthorityBuilderParams,
+        options: Optional[TransactionBuilderOptions] = None,
+    ):
+        return revoke_nft_collection_authority_builder(self.metaplex, input, options)
+
     def delete(
         self,
         input: DeleteNftBuilderParams,
@@ -89,3 +115,18 @@ class NftBuildersClient:
         options: Optional[TransactionBuilderOptions] = None,
     ):
         return update_nft_builder(self.metaplex, input, options)
+
+    def delegate(
+        self,
+        input: ApproveNftDelegateBuilderParams,
+        options: Optional[TransactionBuilderOptions] = None,
+    ):
+        return approve_nft_delegate_builder(self.metaplex, input, options)
+
+    # TODO_ORIGINAL: Not used yet
+    # def revoke(
+    #         self,
+    #         input: RevokeNftDelegateBuilderParams,
+    #         options: Optional[TransactionBuilderOptions] = None
+    # ):
+    #     return revokeNftDelegateBuilder(self.metaplex, input, options);
