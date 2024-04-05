@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, cast
+from typing import Any, Optional, Union, cast
 
 from solders.pubkey import Pubkey
 
@@ -32,10 +32,32 @@ class TokenMetadataDelegateOutput:
     token_account: Optional[Pubkey] = None
 
 
+@dataclass
+class MetadataDelegateInputWithData:
+    delegate: Signer
+    update_authority: Pubkey
+    type: str
+    data: Optional[Any] = None
+    __kind: Optional[Any] = None
+
+
+@dataclass
+class TokenDelegateInputWithData:
+    delegate: Signer
+    owner: Pubkey
+    type: str
+    data: Any
+    __kind: Any
+    token: Optional[Pubkey] = None
+
+
+DelegateInputWithData = Union[MetadataDelegateInputWithData, TokenDelegateInputWithData]
+
+
 def parse_token_metadata_delegate_input(
     metaplex,
     mint: Pubkey,
-    input: TokenMetadataDelegateInput,
+    input: DelegateInputWithData,
     programs: Optional[list[Program]] = None,
 ):
     if hasattr(input, "update_authority"):

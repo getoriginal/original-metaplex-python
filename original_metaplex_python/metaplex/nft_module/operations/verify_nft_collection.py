@@ -132,11 +132,11 @@ def verify_nft_collection_builder(
             TransactionBuilder.make()
             .set_fee_payer(payer)
             .add(
-                {
-                    "instruction": instruction,
-                    "signers": [payer, collection_authority],
-                    "key": params.instruction_key or "verifyCollection",
-                }
+                InstructionWithSigners(
+                    instruction=instruction,
+                    signers=[payer, collection_authority],
+                    key=params.instruction_key or "verify_collection",
+                )
             )
         )
 

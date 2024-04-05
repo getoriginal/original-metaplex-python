@@ -5,6 +5,8 @@ from typing import Optional, Union, cast
 from solders.pubkey import Pubkey
 
 from original_metaplex_python.metaplex.nft_module.delegate_input import (
+    MetadataDelegateInputWithData,
+    TokenDelegateInputWithData,
     TokenMetadataDelegateInput,
     parse_token_metadata_delegate_input,
 )
@@ -67,10 +69,11 @@ TokenMetadataAuthority = Union[
 
 
 class AuthorityType(Enum):
-    Metadata = 0
-    MetadataDelegate = 1
-    TokenDelegate = 2
-    Holder = 3
+    None_ = 0
+    Metadata = 1
+    Holder = 2
+    MetadataDelegate = 3
+    TokenDelegate = 4
 
 
 @dataclass
@@ -148,7 +151,10 @@ def parse_token_metadata_authorization(
             type=input.authority.type,
         )
         delegate_output = parse_token_metadata_delegate_input(
-            metaplex, input.mint, delegate_input, input.programs
+            metaplex=metaplex,
+            mint=input.mint,
+            input=cast(MetadataDelegateInputWithData, delegate_input),
+            programs=input.programs,
         )
         delegate_record = delegate_output.delegate_record
         approver = delegate_output.approver
@@ -168,7 +174,10 @@ def parse_token_metadata_authorization(
         )
 
         delegate_output = parse_token_metadata_delegate_input(
-            metaplex, input.mint, delegate_input, input.programs
+            metaplex=metaplex,
+            mint=input.mint,
+            input=cast(TokenDelegateInputWithData, delegate_input),
+            programs=input.programs,
         )
 
         delegate_record = delegate_output.delegate_record

@@ -38,7 +38,13 @@ def revoke_collection_authority(
     ]
     if remaining_accounts is not None:
         keys += remaining_accounts
-    identifier = b"\x1f\x8b\x87\xc6\x1d0\xa0\x9a"
+
+    # DON 4-Apr-2024 - TODO_ORIGINAL The original code uses this byte string as the identifier, however it doesn't work
+    # and raises an error - "Transaction simulation failed: Error processing Instruction 0: invalid instruction data"
+    #
+    # We use the below descriminator of 24 instead which is taken from the javascript SDK.
+    # identifier = b"\x1f\x8b\x87\xc6\x1d0\xa0\x9a"
+    identifier = bytes([24])
     encoded_args = b""
     data = identifier + encoded_args
     return Instruction(program_id, data, keys)

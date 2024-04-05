@@ -11,6 +11,7 @@ from original_metaplex_python.metaplex.nft_module.nft_pdas_client import (
 )
 from original_metaplex_python.metaplex.types.signer import Signer, get_public_key
 from original_metaplex_python.metaplex.utils.transaction_builder import (
+    InstructionWithSigners,
     TransactionBuilder,
     TransactionBuilderOptions,
 )
@@ -136,11 +137,11 @@ def unverify_nft_collection_builder(
             TransactionBuilder.make()
             .set_fee_payer(payer)
             .add(
-                {
-                    "instruction": instruction,
-                    "signers": [payer, collection_authority],
-                    "key": params.instruction_key or "unverify_collection",
-                }
+                InstructionWithSigners(
+                    instruction=instruction,
+                    signers=[payer, collection_authority],
+                    key=params.instruction_key or "unverify_collection",
+                )
             )
         )
 
@@ -164,8 +165,8 @@ def unverify_nft_collection_builder(
         TransactionBuilder.make()
         .set_fee_payer(payer)
         .add(
-            {
-                "instruction": unverify(
+            InstructionWithSigners(
+                instruction=unverify(
                     accounts=UnverifyAccounts(
                         authority=get_public_key(collection_authority),
                         delegate_record=delegate_record,
@@ -177,8 +178,8 @@ def unverify_nft_collection_builder(
                     args=UnverifyArgs(verification_args=CollectionV1()),
                     program_id=token_metadata_program.address,
                 ),
-                "signers": [collection_authority],
-                "key": params.instruction_key or "unverify_collection",
-            }
+                signers=[collection_authority],
+                key=params.instruction_key or "unverify_collection",
+            )
         )
     )
