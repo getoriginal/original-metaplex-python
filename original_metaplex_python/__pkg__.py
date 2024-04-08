@@ -1,5 +1,5 @@
 __author__ = "Original"
-__version__ = "0.0.1-alpha.2"
+__version__ = "0.0.1-alpha.3"
 __maintainer__ = "Original"
 __email__ = "support@getoriginal.com"
 __status__ = "Alpha"
