@@ -1,3 +1,92 @@
+# -------- THIS IS NO LONGER SUPPORTED -------- #
+If you're looking for a Python version of Metaplex's libraries, this was our attempt to create one, but in the end, we decided that it was a lot to maintain on top of the actual client work we need to do. This is also based on the Token Metadata library, and Metaplex now recommend using Core - https://developers.metaplex.com/core. To help, what we can suggest is the following:
+
+If you're using metaplex core, start by generating the instructions using anchor and the idl found here with:
+
+`pip install "anchorpy[cli]"`
+
+`anchorpy client-gen ./idl/mpl_core.json ./src --program-id CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d`
+
+You'll need to change the discriminators to the ones found in the mpl core source code. For example, the discriminator for create_v1 0, and is found here.
+
+We use this constant:
+`CREATE_V1_INSTRUCTION_DISCRIMINATOR = bytes([0])`
+
+Assuming you put the generated code inside a folder called metaplex/python you can do something like this in your code:
+```
+from .metaplex.python.types import CreateV1Args as CreateV1TypeArgs
+from .metaplex.python.instructions import CreateV1Accounts
+from .metaplex.python.instructions import (
+    CreateV1Args as CreateV1InstructionArgs,
+)
+from .metaplex.python.types.data_state import AccountState
+
+    def get_latest_blockhash_and_height(client):
+          response = client.get_latest_blockhash()
+          value = response.value
+          return str(value.blockhash), value.last_valid_block_height
+
+    def test_create_v1(self) -> None:
+        latest_blockhash, last_valid_block_height = get_latest_blockhash_and_height(
+            self.client
+        )
+
+        payer_keypair = ..."your payer keypair"
+        asset_keypair = Keypair()
+
+        try:
+            instruction = create_v1(
+                args=CreateV1InstructionArgs(
+                    create_v1_args=CreateV1TypeArgs(
+                        data_state=AccountState(),
+                        name="your_asset_name",
+                        uri="your_asset_uri",
+                        plugins=[],
+                    )
+                ),
+                accounts=CreateV1Accounts(
+                    asset=asset_keypair.pubkey(),
+                    collection=None,
+                    authority=None,
+                    payer=payer_keypair.pubkey(),
+                    owner=owner_pubkey,
+                    update_authority=None,
+                    log_wrapper=None,
+                ),
+            )
+        except Exception as e:
+            raise Exception(f"Failed to create asset {e}")
+
+        message = MessageV0.try_compile(
+            payer=payer_keypair.pubkey(),
+            instructions=[instruction],
+            address_lookup_table_accounts=[],
+            recent_blockhash=Hash.from_string(latest_blockhash),
+        )
+
+        transaction = VersionedTransaction(
+            message=message, 
+            keypairs=[payer_keypair, asset_keypair]
+        )
+
+        signature = self.client.send_raw_transaction(bytes(transaction)).value
+        signature_status_response = self.client.confirm_transaction(
+            tx_sig=signature,
+            commitment=Finalized,
+            sleep_seconds=0.5,
+            last_valid_block_height=last_valid_block_height,
+        )
+
+        confirmed_tx = self.client.get_transaction(
+            signature,
+            encoding="json",
+            commitment=Finalized,
+            max_supported_transaction_version=0,
+        )
+```
+
+# ------- Old documentation below -------- #
+
 # original-metaplex-python
 Python port of Metaplex JS SDK - https://github.com/metaplex-foundation/js
 
